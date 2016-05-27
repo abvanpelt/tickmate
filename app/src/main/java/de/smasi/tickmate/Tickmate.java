@@ -173,22 +173,18 @@ public class Tickmate extends ListActivity implements
         new AlertDialog.Builder(this)
                 .setTitle(R.string.export_db)
                 .setView(input)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        Editable value = input.getText();
-                        String name = value.toString();
-                        try {
-                            DatabaseOpenHelper.getInstance(Tickmate.this).exportDatabase(name);
-                            Toast.makeText(Tickmate.this, R.string.export_db_success, Toast.LENGTH_LONG).show();
-                        } catch (IOException e) {
-                            Toast.makeText(Tickmate.this, e.toString(), Toast.LENGTH_LONG).show();
-                        }
+                .setPositiveButton(android.R.string.ok, (DialogInterface dialog, int whichButton) -> {
+                    Editable value = input.getText();
+                    String name = value.toString();
+                    try {
+                        DatabaseOpenHelper.getInstance(Tickmate.this).exportDatabase(name);
+                        Toast.makeText(Tickmate.this, R.string.export_db_success, Toast.LENGTH_LONG).show();
+                    } catch (IOException e) {
+                        Toast.makeText(Tickmate.this, e.toString(), Toast.LENGTH_LONG).show();
                     }
-                }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Do nothing.
-            }
-        }).show();
+                })
+                .setNegativeButton(android.R.string.cancel, (DialogInterface dialog, int whichButton) -> {})
+                .show();
     }
 
     public void importDB() {
@@ -196,37 +192,27 @@ public class Tickmate extends ListActivity implements
         if (items.length == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.import_db_none_found)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
+                    .setPositiveButton(android.R.string.ok, (DialogInterface dialog, int which) -> {})
                     .show();
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.import_db);
 
-            builder.setItems(items, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    final int that = which;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Tickmate.this);
-                    builder.setMessage(R.string.import_db_really)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    try {
-                                        DatabaseOpenHelper.getInstance(Tickmate.this).importDatabase(items[that]);
-                                        Toast.makeText(Tickmate.this, R.string.import_db_success, Toast.LENGTH_LONG).show();
-                                        refresh();
-                                    } catch (IOException e) {
-                                        Toast.makeText(Tickmate.this, e.toString(), Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            })
-                            .show();
-                }
+            builder.setItems(items, (DialogInterface dialog, int which) -> {
+                final int that = which;
+                AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(Tickmate.this);
+                confirmBuilder.setMessage(R.string.import_db_really)
+                        .setPositiveButton(android.R.string.yes, (DialogInterface confirmDialog, int confirmWhich) -> {
+                            try {
+                                DatabaseOpenHelper.getInstance(Tickmate.this).importDatabase(items[that]);
+                                Toast.makeText(Tickmate.this, R.string.import_db_success, Toast.LENGTH_LONG).show();
+                                refresh();
+                            } catch (IOException e) {
+                                Toast.makeText(Tickmate.this, e.toString(), Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, (DialogInterface confirmDialog, int confirmWhich) -> {})
+                        .show();
             });
             builder.show();
         }
@@ -314,18 +300,15 @@ public class Tickmate extends ListActivity implements
         final int CHUNK_SIZE = 20; // Large chunk sizes (more than items on the screen) prevent problems when switching date order direction
         // Matching the addCount() amount to the setSelection() amount keeps the screen in the right place when infiniteScrolling upwards
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.getAdapter().addCount(CHUNK_SIZE);  // was: mAdapter.getAdapter().addCount(5);
-                mAdapter.handledRefresh();
+        mHandler.postDelayed(() -> {
+            mAdapter.getAdapter().addCount(CHUNK_SIZE);  // was: mAdapter.getAdapter().addCount(5);
+            mAdapter.handledRefresh();
 
-                Boolean reverseDateOrdering = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
-                        getBoolean("reverse-date-order-key", false);
-                if (!reverseDateOrdering) {
-                    getListView().setSelection(CHUNK_SIZE); // When infiniteScrolling upwards,
-                    // prevents the infinite loop bug and keeps display from jumping
-                }
+            Boolean reverseDateOrdering = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).
+                    getBoolean("reverse-date-order-key", false);
+            if (!reverseDateOrdering) {
+                getListView().setSelection(CHUNK_SIZE); // When infiniteScrolling upwards,
+                // prevents the infinite loop bug and keeps display from jumping
             }
         }, 500);
     }

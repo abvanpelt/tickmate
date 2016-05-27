@@ -5,22 +5,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.preference.MultiSelectListPreference;
-import android.text.Editable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import de.smasi.tickmate.R;
-import de.smasi.tickmate.Tickmate;
 import de.smasi.tickmate.database.DataSource;
-import de.smasi.tickmate.database.DatabaseOpenHelper;
 import de.smasi.tickmate.models.Group;
 import de.smasi.tickmate.models.Track;
 import de.smasi.tickmate.views.EditGroupsActivity;
@@ -40,12 +35,9 @@ public class GroupListPreference extends MultiSelectListPreference {
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        builder.setNeutralButton(R.string.menu_edit_groups, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(getContext(), EditGroupsActivity.class);
-                getContext().startActivity(intent);
-            }
+        builder.setNeutralButton(R.string.menu_edit_groups, (DialogInterface dialog, int which) -> {
+            Intent intent = new Intent(getContext(), EditGroupsActivity.class);
+            getContext().startActivity(intent);
         });
     }
 
@@ -58,17 +50,12 @@ public class GroupListPreference extends MultiSelectListPreference {
         if (mDataSource.getGroups().size() == 0) {
             new AlertDialog.Builder(getContext())
                     .setMessage(R.string.no_groups_found)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            Intent intent = new Intent(getContext(), EditGroupsActivity.class);
-                            getContext().startActivity(intent);
-                        }
+                    .setPositiveButton(android.R.string.yes, (DialogInterface dialog, int which) -> {
+                        Intent intent = new Intent(getContext(), EditGroupsActivity.class);
+                        getContext().startActivity(intent);
                     })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    // Do nothing.
-                }
-                    }).show();
+                    .setNegativeButton(android.R.string.no, (DialogInterface dialog, int which) -> {})
+                    .show();
         }
         else {
             super.onClick();

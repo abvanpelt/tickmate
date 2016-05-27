@@ -42,12 +42,9 @@ public class TickColorPreference extends EditTextPreference {
 
         gridView.setAdapter(new TickColorListAdapter(getContext()));
 
-        gridView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                setColor(TickColor.getColor(position));
-                getDialog().dismiss();
-            }
+        gridView.setOnItemClickListener((AdapterView<?> parent, View v, int position, long id) -> {
+            setColor(TickColor.getColor(position));
+            getDialog().dismiss();
         });
     }
 

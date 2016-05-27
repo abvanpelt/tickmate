@@ -34,12 +34,9 @@ public class IconChooserDialog extends Dialog {
 
       gridview.setAdapter(new IconListAdapter(getContext()));
 
-      gridview.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int id, long arg3) {
-				selected_icon = (String)arg0.getItemAtPosition(id);
-				dialog.dismiss();
-			}
+      gridview.setOnItemClickListener((AdapterView<?> arg0, View arg1, int id, long arg3) -> {
+		  selected_icon = (String)arg0.getItemAtPosition(id);
+		  dialog.dismiss();
       });     
     }
 

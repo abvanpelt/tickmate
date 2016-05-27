@@ -30,13 +30,10 @@ public class IconPreference extends EditTextPreference {
 
 	      gridview.setAdapter(new IconListAdapter(getContext()));
 
-	      gridview.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> arg0, View arg1, int id, long arg3) {
-					setText((String)arg0.getItemAtPosition(id));
-					getDialog().dismiss();
-				}
-	      });     
+	      gridview.setOnItemClickListener((AdapterView<?> arg0, View arg1, int id, long arg3) -> {
+				setText((String) arg0.getItemAtPosition(id));
+				getDialog().dismiss();
+	      });
 	}
 
 	public IconPreference(Context context, AttributeSet attrs) {
