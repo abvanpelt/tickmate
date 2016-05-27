@@ -131,14 +131,11 @@ public class EditGroupsActivity extends ListActivity {
                         .setTitle(R.string.alert_delete_group_title)
                         .setMessage(R.string.alert_delete_group_message)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(android.R.string.yes, (DialogInterface dialog, int whichButton) -> {
+                            Group g = groupsAdapter.getItem((int) info.id);
 
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                Group g = groupsAdapter.getItem((int) info.id);
-
-                                DataSource.getInstance().deleteGroup(g);
-                                loadGroups();
-                            }
+                            DataSource.getInstance().deleteGroup(g);
+                            loadGroups();
                         })
                         .setNegativeButton(android.R.string.no, null).show();
                 return true;
